@@ -136,7 +136,7 @@ $members = $user = UserDetail::where('referal',$users->referal)->get();
         else{
             $thisuser->varified=1;
             $thisuser->save();
-            echo "verified now";
+            // echo "verified now";
             return redirect("/")->with('message','Account has been activated!');
             // $data = ['user'=>$thisuser];
             // return view('pages.activateview',$data);
@@ -235,8 +235,8 @@ public function addNewMember(Request $request){
 }
 // return re-allocate page
 public function reAllocate(){
-    $address = ReAllocation::where('user_id',Auth::user()->id)
-    ->where('status',1)
+    $location = ReAllocation::where('user_id',Auth::user()->id)
+    // ->where('status',1)
     ->join('villages','villages.id','=','re_allocations.new_village_id')
     ->join('cells','cells.id','=','villages.cell')
     ->join('sectors','sectors.id','=','cells.sector')
@@ -245,8 +245,14 @@ public function reAllocate(){
     ->select('re_allocations.*','villages.name as village','villages.id as umudugudu','cells.name as cell','cells.id as akagali','sectors.name as sector','sectors.id as umurenge','districts.name as district','districts.id as akarere','provinces.name as province','provinces.id as intara')
     ->first();
     $district = District::where('province',1)->get();
-    $data = ['districts'=>$district,
-            'addresses'=>$address];
+    if(empty($location)){
+        $data = ['districts'=>$district,
+        'addresses'=>''];
+    }
+    else{
+        $data = ['districts'=>$district,
+        'addresses'=>$location];
+    }
             // var_dump($data);
             // die();
     return view('re_allocate',$data)->with('msg','welcome');;
@@ -396,15 +402,13 @@ return view('reset',$data);
 // reseting the password
 public function postResetPassword(Request $request){
     $request->validate([
-        'password' => 'required|confirmed|min:6', // this will check password_confirmation 
-                                                  //field in request
+        'password' => 'required|confirmed|min:6',//this will check password_confirmation
     ]);
-    // $referal = md5(microtime());
-    // $user = User::create([
-    //     'role_id'=>1,
-    //     'email'=>$request->get('email'),
-    //     'password'=>Hash::make($request->get('password')),
-    //     'varified'=>0,
-    //   ]);
+    var_dump($request->all());
+    $user = User::where('id',$request->get('user_id'))->first();
+    $user->password = Hash::make($request->get('password'));
+    $user->save();
+
+    return redirect("/")->with('message','Password has been reset successfully!');
 }
 }

@@ -34,6 +34,7 @@
                 </div>
                 <h3 class="profile-username text-center">{{$user->names}}</h3>
                 <h4 class="profile-username text-center">{{$user->email}}</h4>
+                <h4 class="profile-username text-center">{{Auth::user()->role_id}}</h4>
               </div>
               <!-- /.card-body -->
             </div>

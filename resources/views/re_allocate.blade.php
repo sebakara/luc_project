@@ -85,6 +85,7 @@
                 </form>
                 </div>
                 <div id="samevillagebx">
+                  @if(!empty($addresses))
                 <form class="form-horizontal" method="post" action="{{route('post_re_allocation')}}" enctype="multipart/form-data">
                     @csrf  
                       <div class="form-group row">
@@ -103,6 +104,7 @@
                         </div>
                         </div>
                 </form>
+                @endif
                 </div>
                 <!-- <hr/> -->
               </div></div>
@@ -111,12 +113,14 @@
             <h2>Current location</h2>
             <div class="card card-primary card-outline">
               <div class="card-body box-profile">
+                @if(!empty($addresses))
                 <h5 class="profile-username text-center">Village: {{$addresses->village}}</h5>
                 <h5 class="profile-username text-center">Cell: {{$addresses->cell}}</h5>
                 <h5 class="profile-username text-center">Sector: {{$addresses->sector}}</h5>
                 <h5 class="profile-username text-center">District: {{$addresses->district}}</h5>
                 <h5 class="profile-username text-center">Province: {{$addresses->province}}</h5>
                 <h5 class="profile-username text-center">Street: {{$addresses->street_address}}</h5>
+                @endif
               </div>
               <!-- /.card-body -->
             </div>

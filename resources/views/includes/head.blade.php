@@ -136,6 +136,25 @@
                 List of Citizen
             </a>
           </li>
+          @elseif(Auth::user()->role_id == 3)
+          <li class="nav-item menu-open">
+            <a href="{{url('dashboard')}}" class="nav-link active">
+              <i class="nav-icon fas fa-tachometer-alt"></i>
+              <p>
+                Dashboard
+              </p>
+            </a>
+          </li>
+          <li class="nav-item">
+            <a href="{{url('add_member')}}" class="nav-link">
+                Add Member
+            </a>
+          </li>
+          <li class="nav-item">
+            <a href="{{url('get_re_allocate')}}" class="nav-link">
+                Re-Allocation
+            </a>
+          </li> 
           @endif
         </ul>
       </nav>
