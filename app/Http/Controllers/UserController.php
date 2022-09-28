@@ -430,15 +430,33 @@ public function postResetPassword(Request $request){
     $request->validate([
         'password' => 'required|confirmed|min:6',//this will check password_confirmation
     ]);
-    var_dump($request->all());
+    // var_dump($request->all());
     $user = User::where('id',$request->get('user_id'))->first();
     $user->password = Hash::make($request->get('password'));
     $user->save();
-
     return redirect("/")->with('message','Password has been reset successfully!');
 }
 // return reset view
 public function getResetPwd(){
     return view('resetview');
 }
+// submit post request
+public function performReset(Request $request){
+    $request->validate([
+        'email'=>'required|exists:users,email'
+    ]);
+    $user = User::where('email',$request->get('email'))->first();
+    $to_name = "system user";
+    $to_email = $request->get('email');
+    $link = 'localhost/hhms/public/change_password/'.base64_encode($to_email);
+    $data = array('name'=>$to_name, 'actlink'=>$link, 'body' => 'Reset Password');
+    //   base64_encode()
+    Mail::send('emails.change_status', $data, function($message) use ($to_name, $to_email) {
+    $message->to($to_email, $to_name)
+    ->subject('Reset Password');
+    $message->from('iribatech@gmail.com','Reset Password');
+    });
+    return redirect('get_reset_pwd')->with('message','please check your email');
+}
+
 }

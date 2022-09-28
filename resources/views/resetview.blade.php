@@ -8,16 +8,19 @@
     @endif
     <div class="card-body register-card-body">
       <p class="login-box-msg">Reset Password</p>
-      <form action="{{route('post_reset_password')}}" method="post">
+      <form action="{{route('perform_reset')}}" method="post">
         @csrf
         <div class="input-group mb-3">
-          <input type="email" name="email" value="" readonly class="form-control">
+          <input type="email" name="email" class="form-control" placeholder="enter your email">
           <div class="input-group-append">
             <div class="input-group-text">
               <span class="fas fa-envelope"></span>
             </div>
           </div>
         </div>
+        @if($errors->has('email'))
+            <div class="alert alert-danger">{{ $errors->first('email') }}</div>
+          @endif
         <div class="row">
           <div class="col-4">
             <button type="submit" class="btn btn-primary btn-block">Reset</button>

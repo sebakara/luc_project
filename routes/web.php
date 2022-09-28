@@ -23,7 +23,7 @@ Route::get('activate_email/{email}',[App\Http\controllers\Usercontroller::class,
 Route::get('change_password/{email}',[App\Http\Controllers\UserController::class,'getchangeStatus'])->name('change_password');
 Route::get('get_reset_pwd',[App\Http\Controllers\UserController::class,'getResetPwd'])->name('get_reset_pwd');
 Route::post('post_reset_password',[App\Http\Controllers\UserController::class,'postResetPassword'])->name('post_reset_password');
-
+Route::post('perform_reset',[App\Http\Controllers\UserController::class,'performReset'])->name('perform_reset');
 
 Route::post('post_login',[App\Http\Controllers\UserController::class, 'postLogin'])->name('post_login');
 Route::middleware(['checklogin'])->group(function(){

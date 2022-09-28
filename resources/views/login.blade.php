@@ -1,7 +1,7 @@
 @include('includes.auth_head')
   <!-- /.login-logo -->
   <div class="card">
-  @if(session('message'))
+    @if(session('message'))
     <div class="alert alert-success">
         {{ session('message') }}
     </div>
@@ -18,7 +18,7 @@
             </div>
           </div>
         </div>
-        @if($errors->has('email'))
+          @if($errors->has('email'))
             <div class="alert alert-danger">{{ $errors->first('email') }}</div>
           @endif
         <div class="input-group mb-3">
@@ -33,11 +33,9 @@
             <div class="alert alert-danger">{{ $errors->first('password') }}</div>
           @endif
         <div class="row">
-          <!-- /.col -->
           <div class="col-4">
             <button type="submit" class="btn btn-primary btn-block">Sign In</button>
           </div>
-          <!-- /.col -->
         </div>
       </form>
       <p class="mb-1">
@@ -47,11 +45,9 @@
         <a href="{{url('get_create_account')}}" class="text-center">Register a new account</a>
       </p>
     </div>
-    <!-- /.login-card-body -->
   </div>
 </div>
 <!-- /.login-box -->
-
 <!-- jQuery -->
 <script src="{{asset('plugins/jquery/jquery.min.js')}}"></script>
 <!-- Bootstrap 4 -->
