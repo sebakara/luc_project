@@ -50,7 +50,7 @@
                       <div class="form-group row">
                         <label for="exampleSelectRounded0" class="col-sm-2 col-form-label">District</label>
                         <select class="custom-select rounded-0 col-sm-10" name="district" id="selectdistrict">
-                        <option value="">------select-------</option>
+                        <option> ------select-------</option>
                           @foreach($districts as $district)
                         <option value="{{$district->id}}">{{$district->name}}</option>
                         @endforeach
@@ -59,20 +59,20 @@
                       <div class="form-group row">
                         <label for="exampleSelectRounded0" class="col-sm-2 col-form-label">sector</label>
                         <select class="custom-select rounded-0 col-sm-10" name="sector" id="selectsector">
-                        <option value="">------select-------</option>
+                        <option value=""> ------select-------</option>
                         </select>
                       </div>
 
                       <div class="form-group row">
                         <label for="exampleSelectRounded0" class="col-sm-2 col-form-label">Cell</label>
                         <select class="custom-select rounded-0 col-sm-10" name="cell" id="selectcell">
-                        <option value="">-------select-------</option>
+                        <option value=""> -------select------</option>
                         </select>
                       </div>
                       <div class="form-group row">
                         <label for="exampleSelectRounded0" class="col-sm-2 col-form-label">Village</label>
                         <select class="custom-select rounded-0 col-sm-10" name="village" id="selectvillage">
-                        <option value="">-------select------</option>
+                        <option value=""> -------select------</option>
                         </select>
                       </div>
                       <div class="form-group row">
@@ -105,9 +105,9 @@
                   <tr>
                     <td>{{$leader->names}}</td>
                     <td>{{$leader->email}}</td>
-                    <td>{{$leader->role_id}}</td>
+                    <td>{{$leader->role_name}}</td>
                     <td>{{$leader->sector}}</td>
-                    <td>{{$leader->names}}</td>
+                    <td>action</td>
                   </tr>
                   @endforeach
                 </tbody>

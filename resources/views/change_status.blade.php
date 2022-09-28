@@ -42,7 +42,11 @@
                     <div class="form-group row">
                         <label for="inputName" class="col-sm-2 col-form-label">Email</label>
                         <div class="col-sm-10">
+                          @if(empty($users->email))
                         <input type="email" name="email" class="form-control" placeholder="email.....">
+                        @else
+                        <input type="email" name="email" value="{{$users->email}}" class="form-control" readonly>
+                        @endif
                         </div>
                         @if($errors->has('email'))
                           <div class="alert alert-danger">{{ $errors->first('email') }}</div>

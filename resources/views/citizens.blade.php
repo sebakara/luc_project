@@ -40,6 +40,7 @@
                     <th>Date Of Birth</th>
                     <th>Gender</th>
                     <th>Birth Location</th>
+                    <th>Status</th>
                     <th>Manage</th>
                   </tr>
                   </thead>
@@ -50,7 +51,8 @@
                         <td>{{$citizen->national_id}}</td>
                         <td>{{$citizen->date_of_birth}}</td>
                         <td>{{$citizen->gender}}</td>
-                        <td>{{$citizen->location_of_birth}}</td>
+                        <td>{{$citizen->village}}</td>
+                        <td>{{$citizen->grand_referal ? 'Member': 'Head' }}</td>
                         <td>
                         @if(Auth::user()->role_id ==1 || Auth::user()->role_id ==5)
                         <a href="{{url('change_status',['family_id'=>$citizen->id])}}">change</a>
@@ -59,15 +61,6 @@
                     </tr>
                     @endforeach
                   </tbody>
-                  <!-- <tfoot>
-                  <tr>
-                    <th>Rendering engine</th>
-                    <th>Browser</th>
-                    <th>Platform(s)</th>
-                    <th>Engine version</th>
-                    <th>CSS grade</th>
-                  </tr>
-                  </tfoot> -->
                 </table>
               </div>
               <!-- /.card-body -->

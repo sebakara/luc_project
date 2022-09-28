@@ -276,17 +276,13 @@ return redirect("get_re_allocate")->with('msg','success');
 
 public function getCitizen(){
     $leader = Leader::where('user_id',Auth::user()->id)->first();
-    // var_dump();
     if(empty($leader)){
-        $citizen = UserDetail::all();
-        // var_dump($citizens);
-        // echo 'admin';
+        $citizen = UserDetail::join('villages','villages.id','=','user_details.location_of_birth')
+        ->select('user_details.*','villages.name as village')->get();
     }
     elseif($leader->village_id != null){
         $locations = ReAllocation::where('new_village_id',$leader->village_id)
         ->select('new_village_id')->get();
-        // var_dump($locations);
-        // echo 'mudugudu';
     }
     elseif($leader->cell_id != null){
         $villages = Village::where('cell',$leader->cell_id)
@@ -317,25 +313,31 @@ public function getLeaderMgt(){
     $leader = Leader::join('user_details','user_details.user_id','=','leaders.user_id')
     ->join('users','users.id','=','user_details.user_id')
     ->join('sectors','sectors.id','=','leaders.sector_id')
-    ->select('leaders.id','user_details.names','users.email','users.role_id','sectors.name as sector')
+    ->join('roles','roles.id','=','users.role_id')
+    ->select('roles.role_name','leaders.id','user_details.names','users.email','users.role_id','sectors.name as sector')
     ->get();
     $user = User::join('user_details','user_details.user_id','=','users.id')
     ->select('users.*','user_details.names')
-    ->whereIn('role_id',[2,3])->get();
+    ->whereIn('role_id',[2,3,4,5])->get();
     $district = District::where('province',1)->get();
 
     $data = ['districts'=>$district,
             'users'=>$user,
             'leaders'=>$leader];
+// var_dump($user);
+// die();
+
     return view('leadership',$data);
 }
 
 // save the leader info
 public function saveLeader(Request $request){
     // var_dump($request->all());
-    $request->validate([
-        'user_id' => 'required|unique:leaders'
-    ]);
+    // die();
+    // $request->validate([
+    //     'user_id' => 'required|unique:leaders'
+    // ]);
+    Leader::where('user_id',$request->get('user_id'))->delete();
     if($request->get('village')){
         $newrole=2;
     }
@@ -359,7 +361,9 @@ return redirect('get_leadermgt')->with('message','Leader created successfully');
 // return create another family
 public function changeStatus($family_id){
 // echo $family_id;
-$user = UserDetail::where('id',$family_id)->first();
+$user = UserDetail::leftjoin('users','users.id','=','user_details.user_id')
+->select('user_details.*','users.email')
+->where('user_details.id',$family_id)->first();
 $data = ['users'=>$user];
 return view('change_status',$data);
 // change_status
@@ -369,25 +373,47 @@ public function postChangeStatus(Request $request){
     // var_dump($request->all());
     // die();
     $referal = md5(microtime());
-    $usernew = User::create([
-        'role_id'=>3,
-        'email'=>$request->get('email'),
-        'password'=>Hash::make('123'),
-        'varified'=>1,
-      ]);
     $user = UserDetail::where('id',$request->get('id'))->first();
-    $user->user_id = $usernew->id;
-    $user->grand_referal = $referal;
-    $user->save();
+    if(!empty($user->user_id)){
+        $usernew = User::where('id',$user->user_id)->first();
+        $usernew->password = Hash::make('123');
+        $usernew->save();
+        // $usernew = User::create([
+        //     'role_id'=>3,
+        //     'email'=>$request->get('email'),
+        //     'password'=>Hash::make('123'),
+        //     'varified'=>1,
+        //   ]);
+        // $user->user_id = $usernew->id;
+        $user->grand_referal = $referal;
+        $user->living_status = $request->get('reason');
+        $user->save();
+
+    }
+    else{
+        $usernew = User::create([
+            'role_id'=>3,
+            'email'=>$request->get('email'),
+            'password'=>Hash::make('123'),
+            'varified'=>1,
+          ]);
+        $user->user_id = $usernew->id;
+        $user->grand_referal = $referal;
+        $user->living_status = $request->get('reason');
+        $user->save();
+
+    }
+    
+
     $to_name = $user->names;
     $to_email = $request->get('email');
     $link = 'localhost/hhms/public/change_password/'.base64_encode($to_email);
-    $data = array('name'=>$to_name, 'actlink'=>$link, 'body' => 'Activation Email');
+    $data = array('name'=>$to_name, 'actlink'=>$link, 'body' => 'Reset Password');
     //   base64_encode()
     Mail::send('emails.change_status', $data, function($message) use ($to_name, $to_email) {
     $message->to($to_email, $to_name)
-    ->subject('Activation Email');
-    $message->from('iribatech@gmail.com','Activation Email');
+    ->subject('Reset Password');
+    $message->from('iribatech@gmail.com','Reset Password');
     });
     // echo "check email"; 
     return redirect('dashboard')->with('message','email sent');

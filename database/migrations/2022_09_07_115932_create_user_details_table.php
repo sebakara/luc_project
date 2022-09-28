@@ -25,6 +25,7 @@ return new class extends Migration
             $table->integer('location_of_birth')->nullable();
             $table->string('referal')->nullable();
             $table->string('grand_referal')->nullable()->comment('created once you become a head of a family');
+            $table->string('living_status')->nullable()->comment('created once you are moving to another location');
             $table->timestamps();
         });
     }
