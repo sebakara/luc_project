@@ -40,9 +40,9 @@
           <!-- /.col -->
         </div>
       </form>
-      <!-- <p class="mb-1">
-        <a href="#">I forgot my password</a>
-      </p> -->
+      <p class="mb-1">
+        <a href="{{url('get_reset_pwd')}}">I forgot my password</a>
+      </p>
       <p class="mb-0">
         <a href="{{url('get_create_account')}}" class="text-center">Register a new account</a>
       </p>

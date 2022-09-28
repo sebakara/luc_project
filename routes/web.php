@@ -21,7 +21,7 @@ Route::post('create_account',[App\Http\Controllers\UserController::class,'create
 Route::get('get_create_account',[App\Http\controllers\Usercontroller::class,'showCreateUser'])->name('get_create_account');
 Route::get('activate_email/{email}',[App\Http\controllers\Usercontroller::class, 'activateEmail']);
 Route::get('change_password/{email}',[App\Http\Controllers\UserController::class,'getchangeStatus'])->name('change_password');
-// Route::get('get_reset_pwd',[App\Http\Controllers\UserController::class,''])
+Route::get('get_reset_pwd',[App\Http\Controllers\UserController::class,'getResetPwd'])->name('get_reset_pwd');
 Route::post('post_reset_password',[App\Http\Controllers\UserController::class,'postResetPassword'])->name('post_reset_password');
 
 

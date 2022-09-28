@@ -59,20 +59,20 @@
                       <div class="form-group row">
                         <label for="exampleSelectRounded0" class="col-sm-2 col-form-label">sector</label>
                         <select class="custom-select rounded-0 col-sm-10" name="sector" id="selectsector">
-                        <option value=""> ------select-------</option>
+                        <option selected value=""> ------select-------</option>
                         </select>
                       </div>
 
                       <div class="form-group row">
                         <label for="exampleSelectRounded0" class="col-sm-2 col-form-label">Cell</label>
                         <select class="custom-select rounded-0 col-sm-10" name="cell" id="selectcell">
-                        <option value=""> -------select------</option>
+                        <option selected value=""> -------select------</option>
                         </select>
                       </div>
                       <div class="form-group row">
                         <label for="exampleSelectRounded0" class="col-sm-2 col-form-label">Village</label>
                         <select class="custom-select rounded-0 col-sm-10" name="village" id="selectvillage">
-                        <option value=""> -------select------</option>
+                        <option selected value=""> -------select------</option>
                         </select>
                       </div>
                       <div class="form-group row">
@@ -162,7 +162,7 @@
 
 // get sectors
 $("#selectdistrict").on("change",function(){
-  $("#selectsector").empty();
+  // $("#selectsector").empty();
     var distrid=$("#selectdistrict").val();
     let _token = $('meta[name="csrf-token"]').attr('content');
     $.ajax({
@@ -172,7 +172,7 @@ $("#selectdistrict").on("change",function(){
       data:{'distId':distrid,_token:'{{ csrf_token() }}'},
       success:function(result){
         var datazaje = result.data;
-        var x = "<option>----------select-----------</option>";
+        var x = "";
         for(let i in datazaje){
          x +="<option value="+datazaje[i].id+">"+datazaje[i].name+"</option>";
         }
@@ -183,7 +183,7 @@ $("#selectdistrict").on("change",function(){
   // selectsector
   // selectcell
   $("#selectsector").on("change",function(){
-    $("#selectcell").empty();
+    // $("#selectcell").empty();
     var sector=$("#selectsector").val();
     let _token = $('meta[name="csrf-token"]').attr('content');
     $.ajax({
@@ -193,7 +193,7 @@ $("#selectdistrict").on("change",function(){
       data:{'id':sector,_token:'{{ csrf_token() }}'},
       success:function(result){
         var datazaje = result.data;
-        var x = "<option>----------select-----------</option>";
+        var x = "";
         for(let i in datazaje){
          x +="<option value="+datazaje[i].id+">"+datazaje[i].name+"</option>";
         }
@@ -203,7 +203,7 @@ $("#selectdistrict").on("change",function(){
   })
   // selectvillage
   $("#selectcell").on("change",function(){
-    $("#selectvillage").empty();
+    // $("#selectvillage").empty();
     var sector=$("#selectcell").val();
     let _token = $('meta[name="csrf-token"]').attr('content');
     $.ajax({
@@ -213,7 +213,7 @@ $("#selectdistrict").on("change",function(){
       data:{'id':sector,_token:'{{ csrf_token() }}'},
       success:function(result){
         var datazaje = result.data;
-        var x = "<option>----------select-----------</option>";
+        var x = "";
         for(let i in datazaje){
          x +="<option value="+datazaje[i].id+">"+datazaje[i].name+"</option>";
         }

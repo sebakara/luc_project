@@ -437,4 +437,8 @@ public function postResetPassword(Request $request){
 
     return redirect("/")->with('message','Password has been reset successfully!');
 }
+// return reset view
+public function getResetPwd(){
+    return view('resetview');
+}
 }
