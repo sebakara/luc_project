@@ -271,7 +271,27 @@ public function postReAllocation(Request $request){
         'street_address'=>$request->get('street_address'), 
         'status'=>1
     ]);
-return redirect("get_re_allocate")->with('msg','success');
+    // get citizen infot
+    $citizeninfo = UserDetail::where('user_id',Auth::user()->id)->first();
+    // get leadersinfo
+    $leaderinfo = Leader::join('users','users.id','leaders.user_id')
+    ->join('user_details','user_details.user_id','users.id')
+    ->where('leaders.village_id',$request->get('location'))
+    ->select('users.email','user_details.names')->first();
+    // formulate the message
+    $message = "Dear ".$leaderinfo->names.", "."The new citizen: ".$citizeninfo->names." moved in your village on the road ".$request->get('street_address');
+
+    $to_name = $leaderinfo->names;
+    $to_email = $leaderinfo->email;
+    $data = array('name'=>$to_name,'body' => $message);
+    //   base64_encode()
+    Mail::send('emails.notify', $data, function($message) use ($to_name, $to_email) {
+    $message->to($to_email, $to_name)
+    ->subject('Notification');
+    $message->from('iribatech@gmail.com','Notification');
+    });
+
+    return redirect("get_re_allocate")->with('msg','success');
 }
 
 public function getCitizen(){
