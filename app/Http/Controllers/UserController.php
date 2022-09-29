@@ -302,23 +302,54 @@ public function getCitizen(){
     }
     elseif($leader->village_id != null){
         $locations = ReAllocation::where('new_village_id',$leader->village_id)
-        ->select('new_village_id')->get();
+        ->select('new_village_id','re_allocations.user_id')->get();
+                $user_ids = array();
+        foreach ($locations as $key => $value) {
+            $user_ids[]=$value->new_village_id;
+        }
+        $citizen = ReAllocation::join('user_details','user_details.user_id','=','re_allocations.user_id')
+        ->join('villages','villages.id','=','user_details.location_of_birth')
+        ->whereIn('new_village_id',$user_ids)
+        ->where('re_allocations.status',1)
+        ->select('user_details.*','villages.name as village')
+        ->get();
+        // var_dump(json_encode($citizen));
+        // die("mudugudu");
     }
     elseif($leader->cell_id != null){
         $villages = Village::where('cell',$leader->cell_id)
-        ->select('villages.id')
+        ->select('villages.id','villages.name')
         ->get();
-        // var_dump($villages);
-        // echo 'akagali';
+        $user_ids = array();
+        foreach ($villages as $key => $value) {
+            $user_ids[]=$value->id;
+        }
+        $citizen = ReAllocation::join('user_details','user_details.user_id','=','re_allocations.user_id')
+        ->join('villages','villages.id','=','user_details.location_of_birth')
+        ->whereIn('new_village_id',$user_ids)
+        ->where('re_allocations.status',1)
+        ->select('user_details.*','villages.name as village')
+        ->get();
+        // var_dump(json_encode($citizen));
+        // die("akagali".$leader->cell_id);
     }
     elseif($leader->sector_id != null){
         $villages = Cell::join('villages','villages.cell','=','cells.id')
         ->where('cells.sector', $leader->sector_id)
         ->select('villages.id')
         ->get();
-        // var_dump($villages);
-        // echo 'umurenge';
-
+        $user_ids = array();
+        foreach ($villages as $key => $value) {
+            $user_ids[]=$value->id;
+        }
+        $citizen = ReAllocation::join('user_details','user_details.user_id','=','re_allocations.user_id')
+        ->join('villages','villages.id','=','user_details.location_of_birth')
+        ->whereIn('new_village_id',$user_ids)
+        ->where('re_allocations.status',1)
+        ->select('user_details.*','villages.name as village')
+        ->get();
+        // var_dump(json_encode($villages));
+        // die("umurenge");
     }
     else{
         echo 'default';

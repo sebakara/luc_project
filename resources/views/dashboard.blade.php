@@ -34,6 +34,7 @@
                 </div>
                 <h3 class="profile-username text-center">{{$user->names}}</h3>
                 <h4 class="profile-username text-center">{{$user->email}}</h4>
+                <!-- <h4 class="profile-username text-center">{{Auth::user()->role_id}}</h4> -->
               </div>
               <!-- /.card-body -->
             </div>
@@ -237,7 +238,7 @@
     }).buttons().container().appendTo('#example1_wrapper .col-md-6:eq(0)');
     $('#example2').DataTable({
       "paging": true,
-      "lengthChange": false,
+      "iDisplayLength": 5,
       "searching": false,
       "ordering": true,
       "info": true,
