@@ -419,6 +419,25 @@ $data = ['users'=>$user];
 return view('change_status',$data);
 // change_status
 }
+// activate
+public function activateCitizen($family_id){
+// echo $family_id;
+$user = UserDetail::where('user_details.id',$family_id)->first();
+ReAllocation::where('user_id',$user->user_id)->update(['status'=>1]);
+return redirect('dashboard')->with('message','citizen activated');
+// list_of_citizen
+// change_status
+}
+// de activate  deActivateCitizen
+public function deActivateCitizen($family_id){
+// echo $family_id;
+$user = UserDetail::where('user_details.id',$family_id)->first();
+ReAllocation::where('user_id',$user->user_id)->update(['status'=>0]);
+return redirect('dashboard')->with('message','citizen de-activated');
+// list_of_citizen
+// change_status
+}
+
 // post change the status
 public function postChangeStatus(Request $request){
     // var_dump($request->all());

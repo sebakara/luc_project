@@ -56,6 +56,9 @@
                         <td>
                         @if(Auth::user()->role_id ==1 || Auth::user()->role_id ==5)
                         <a href="{{url('change_status',['family_id'=>$citizen->id])}}">change</a>
+                        @elseif(Auth::user()->role_id ==2)
+                        <a href="{{url('activate',['family_id'=>$citizen->id])}}">Activate |</a>
+                        <a href="{{url('de_activate',['family_id'=>$citizen->id])}}">Deactivate</a>
                         @endif
                         </td>
                     </tr>
@@ -117,7 +120,17 @@
   $(function () {
     $("#example1").DataTable({
       "responsive": true, "lengthChange": false, "autoWidth": false,
-      "buttons": ["copy", "csv", "excel", "pdf", "print", "colvis"]
+      "buttons": ["copy", "csv", "excel", "pdf", "print", "colvis"],
+      // "sDom": 'T<"clear">lfrtip',
+      "oTableTools": {
+            "aButtons": [
+                {
+                    "sExtends": "ajax",
+                    "sButtonText": "Special columns",
+                    "mColumns": [ 0, 1, 4,5 ]
+                }
+            ]
+        }
     }).buttons().container().appendTo('#example1_wrapper .col-md-6:eq(0)');
     $('#example2').DataTable({
       "paging": true,

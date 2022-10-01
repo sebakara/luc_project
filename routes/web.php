@@ -38,6 +38,10 @@ Route::middleware(['checklogin'])->group(function(){
     Route::post('save_leader',[App\Http\Controllers\UserController::class,'saveLeader'])->name('save_leader');
     Route::get('list_of_citizen',[App\Http\Controllers\UserController::class, 'getCitizen'])->name('list_of_citizen');
     Route::get('change_status/{family_id}',[App\Http\Controllers\UserController::class, 'changeStatus'])->name('change_status');
+    Route::get('activate/{family_id}',[App\Http\Controllers\UserController::class, 'activateCitizen'])->name('activate');
+    Route::get('de_activate/{family_id}',[App\Http\Controllers\UserController::class, 'deActivateCitizen'])->name('de_activate');
+
+
     Route::post('post_change_status',[App\Http\Controllers\UserController::class,'postChangeStatus'])->name('post_change_status');
     Route::get('create_citizen',[App\Http\Controllers\Usercontroller::class,'createCitizen'])->name('create_citizen');
     Route::post('post_create_citizen',[App\Http\Controllers\Usercontroller::class, 'postCreateCitizen'])->name('post_create_citizen');
