@@ -510,4 +510,75 @@ public function performReset(Request $request){
     return redirect('get_reset_pwd')->with('message','please check your email');
 }
 
+// return create users
+public function createCitizen(){
+    $province = Province::get();
+    $data = ['provinces'=>$province];
+    return view('create_citizen',$data);
+}
+// post create citizen
+public function postCreateCitizen(Request $request){
+        $request->validate([
+            'names' => 'required|min:3|max:50',
+            'email'=>'required|email|unique:users', // this will check password_confirmation 
+            'national_id'=>'required|unique:user_details',
+            'phone_number'=>'required',
+            'gender' => 'required',
+            'date_of_birth'=>'required|before:today',
+            'location'=>'required',                                       //field in request
+        ]);
+    $newvillage = Leader::where('user_id',Auth::user()->id)->first();
+
+        $referal = md5(microtime());
+        $user = User::create([
+            'role_id'=>3,
+            'email'=>$request->get('email'),
+            'password'=>Hash::make($request->get('password')),
+            'varified'=>0,
+          ]);
+
+        if($request->hasfile('profile'))
+        {
+            $file = $request->file('profile');
+            $extenstion = $file->getClientOriginalExtension();
+            $filename = time().'.'.$extenstion;
+            $file->move('uploads/', $filename);
+            // $user->profile_image=$filename;
+        }
+        else{
+            $filename = null;
+        }
+
+
+          UserDetail::create([
+            'names'=>$request->get('names'),
+            'date_of_birth'=>$request->get('date_of_birth'),
+            'gender'=> $request->get('gender'),
+            'phone_number'=> $request->get('phone_number'),
+            'user_id'=>$user->id,
+            'referal'=>$referal,
+            'profile_image'=>$filename,
+          ]);
+
+          ReAllocation::create([
+            'user_id'=>$user->id,
+            'new_village_id'=>$newvillage->village_id,
+            'status'=>1,
+            ]);
+
+            $to_name = $request->get('names');
+            $to_email = $request->get('email');
+            $link = 'localhost/hhms/public/change_password/'.base64_encode($to_email);
+            $data = array('name'=>$to_name, 'actlink'=>$link, 'body' => 'Reset Password');
+            //   base64_encode()
+            Mail::send('emails.change_status', $data, function($message) use ($to_name, $to_email) {
+            $message->to($to_email, $to_name)
+            ->subject('Reset Password');
+            $message->from('iribatech@gmail.com','Reset Password');
+            });
+
+return redirect('create_citizen')->with('message','successfully created');
+            echo "successfully created";
+    // jeanluchristian123@gmail.com
+}
 }

@@ -39,6 +39,8 @@ Route::middleware(['checklogin'])->group(function(){
     Route::get('list_of_citizen',[App\Http\Controllers\UserController::class, 'getCitizen'])->name('list_of_citizen');
     Route::get('change_status/{family_id}',[App\Http\Controllers\UserController::class, 'changeStatus'])->name('change_status');
     Route::post('post_change_status',[App\Http\Controllers\UserController::class,'postChangeStatus'])->name('post_change_status');
+    Route::get('create_citizen',[App\Http\Controllers\Usercontroller::class,'createCitizen'])->name('create_citizen');
+    Route::post('post_create_citizen',[App\Http\Controllers\Usercontroller::class, 'postCreateCitizen'])->name('post_create_citizen');
 });
 
 Route::post('get_district_prov',[App\Http\Controllers\UserController::class,'getDistricts'])->name('get_district_prov');

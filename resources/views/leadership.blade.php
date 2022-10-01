@@ -90,7 +90,7 @@
               <div class="card-body box-profile">
                 <h4>Leaders</h4>
               </div>
-              <table id="example2" class="table table-bordered table-hover">
+              <table id="example1" class="table table-bordered table-striped">
                 <thead>
                   <tr>
                     <th>Names</th>
@@ -143,7 +143,23 @@
 <script src="{{asset('dist/js/adminlte.min.js')}}"></script>
 <!-- AdminLTE for demo purposes -->
 <script src="{{asset('dist/js/demo.js')}}"></script>
-
+<script>
+  $(function () {
+    $("#example1").DataTable({
+      "responsive": true, "lengthChange": false, "autoWidth": false,
+      "buttons": ["copy", "csv", "excel", "pdf", "print", "colvis"]
+    }).buttons().container().appendTo('#example1_wrapper .col-md-6:eq(0)');
+    $('#example2').DataTable({
+      "paging": true,
+      "iDisplayLength": 5,
+      "searching": false,
+      "ordering": true,
+      "info": true,
+      "autoWidth": false,
+      "responsive": true,
+    });
+  });
+</script>
 <script>
   $(window).ready(function(){
     $('#diffvillagebx').hide();
