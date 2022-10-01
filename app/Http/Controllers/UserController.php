@@ -47,7 +47,7 @@ public function postLogin(Request $request){
     if($userauth->varified == 0){
     $to_name = $userauth->names;
     $to_email = $request->get('email');
-    $link = 'localhost/hhms/public/activate_email/'.base64_encode($to_email);
+    $link = 'localhost/luc/public/activate_email/'.base64_encode($to_email);
     $data = array('name'=>$to_name, 'actlink'=>$link, 'body' => 'Activation Email');
     //   base64_encode()
     Mail::send('emails.activate', $data, function($message) use ($to_name, $to_email) {
@@ -108,7 +108,7 @@ $members = $user = UserDetail::where('referal',$users->referal)->get();
           ]);
             $to_name = $request->get('names');
             $to_email = $request->get('email');
-            $link = 'localhost/hhms/public/activate_email/'.base64_encode($to_email);
+            $link = 'localhost/luc/public/activate_email/'.base64_encode($to_email);
             $data = array('name'=>$to_name, 'actlink'=>$link, 'body' => 'Activation Email');
             //   base64_encode()
             Mail::send('emails.activate', $data, function($message) use ($to_name, $to_email) {
@@ -437,6 +437,7 @@ public function postChangeStatus(Request $request){
         //   ]);
         // $user->user_id = $usernew->id;
         $user->grand_referal = $referal;
+        $user->referal = $referal;
         $user->living_status = $request->get('reason');
         $user->save();
 
@@ -458,7 +459,7 @@ public function postChangeStatus(Request $request){
 
     $to_name = $user->names;
     $to_email = $request->get('email');
-    $link = 'localhost/hhms/public/change_password/'.base64_encode($to_email);
+    $link = 'localhost/luc/public/change_password/'.base64_encode($to_email);
     $data = array('name'=>$to_name, 'actlink'=>$link, 'body' => 'Reset Password');
     //   base64_encode()
     Mail::send('emails.change_status', $data, function($message) use ($to_name, $to_email) {
@@ -499,7 +500,7 @@ public function performReset(Request $request){
     $user = User::where('email',$request->get('email'))->first();
     $to_name = "system user";
     $to_email = $request->get('email');
-    $link = 'localhost/hhms/public/change_password/'.base64_encode($to_email);
+    $link = 'localhost/luc/public/change_password/'.base64_encode($to_email);
     $data = array('name'=>$to_name, 'actlink'=>$link, 'body' => 'Reset Password');
     //   base64_encode()
     Mail::send('emails.change_status', $data, function($message) use ($to_name, $to_email) {
@@ -528,13 +529,18 @@ public function postCreateCitizen(Request $request){
             'location'=>'required',                                       //field in request
         ]);
     $newvillage = Leader::where('user_id',Auth::user()->id)->first();
-
+if(empty($newvillage)){
+    $newvillage_id = $request->get('location');
+}
+else{
+    $newvillage_id = $newvillage->village_id;
+}
         $referal = md5(microtime());
         $user = User::create([
             'role_id'=>3,
             'email'=>$request->get('email'),
             'password'=>Hash::make($request->get('password')),
-            'varified'=>0,
+            'varified'=>1,
           ]);
 
         if($request->hasfile('profile'))
@@ -548,27 +554,27 @@ public function postCreateCitizen(Request $request){
         else{
             $filename = null;
         }
-
-
           UserDetail::create([
             'names'=>$request->get('names'),
             'date_of_birth'=>$request->get('date_of_birth'),
+            'national_id'=>$request->get('national_id'),
             'gender'=> $request->get('gender'),
             'phone_number'=> $request->get('phone_number'),
             'user_id'=>$user->id,
+            'location_of_birth'=> $request->get('location'),
             'referal'=>$referal,
             'profile_image'=>$filename,
           ]);
 
           ReAllocation::create([
             'user_id'=>$user->id,
-            'new_village_id'=>$newvillage->village_id,
+            'new_village_id'=>$newvillage_id,
             'status'=>1,
             ]);
 
             $to_name = $request->get('names');
             $to_email = $request->get('email');
-            $link = 'localhost/hhms/public/change_password/'.base64_encode($to_email);
+            $link = 'localhost/luc/public/change_password/'.base64_encode($to_email);
             $data = array('name'=>$to_name, 'actlink'=>$link, 'body' => 'Reset Password');
             //   base64_encode()
             Mail::send('emails.change_status', $data, function($message) use ($to_name, $to_email) {

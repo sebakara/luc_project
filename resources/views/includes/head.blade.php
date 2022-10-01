@@ -103,6 +103,11 @@
             </a>
           </li>
           <li class="nav-item">
+            <a href="{{url('create_citizen')}}" class="nav-link">
+                Register Citizen
+            </a>
+          </li>
+          <li class="nav-item">
             <a href="{{url('list_of_citizen')}}" class="nav-link">
                 List of Citizen
             </a>
