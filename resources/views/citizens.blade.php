@@ -127,7 +127,7 @@
                 {
                     "sExtends": "ajax",
                     "sButtonText": "Special columns",
-                    "mColumns": [ 0, 1, 4,5 ]
+                    "mColumns": [0, 1, 4,5]
                 }
             ]
         }

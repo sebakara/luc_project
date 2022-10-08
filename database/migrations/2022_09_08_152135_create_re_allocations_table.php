@@ -17,6 +17,8 @@ return new class extends Migration
             $table->increments('id');
             $table->integer('user_id');
             $table->integer('new_village_id');
+            $table->string('street_address')->nullabe();
+            $table->string('house_number')->nullable();
             $table->integer('status')->default(0);
             $table->timestamps();
         });

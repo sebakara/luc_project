@@ -77,6 +77,13 @@
                           <div class="alert alert-danger">{{ $errors->first('street_address') }}</div>
                         @endif
                       </div>
+
+                      <div class="form-group row">
+                        <label for="inputName" name="names" class="col-sm-2 col-form-label">House Number</label>
+                        <div class="col-sm-10">
+                        <input type="text" name="house_number" class="form-control" placeholder="house number">
+                        </div>
+                      </div>
                       <div class="form-group row">
                         <div class="offset-sm-2 col-sm-10">
                           <button type="submit" class="btn btn-success">Submit</button>
@@ -97,6 +104,12 @@
                         @if($errors->has('street_address'))
                           <div class="alert alert-danger">{{ $errors->first('street_address') }}</div>
                         @endif
+                      </div>
+                      <div class="form-group row">
+                        <label for="inputName" name="names" class="col-sm-2 col-form-label">House Number</label>
+                        <div class="col-sm-10">
+                        <input type="text" name="house_number" class="form-control" placeholder="house number">
+                        </div>
                       </div>
                       <div class="form-group row">
                         <div class="offset-sm-2 col-sm-10">
@@ -120,6 +133,7 @@
                 <h5 class="profile-username text-center">District: {{$addresses->district}}</h5>
                 <h5 class="profile-username text-center">Province: {{$addresses->province}}</h5>
                 <h5 class="profile-username text-center">Street: {{$addresses->street_address}}</h5>
+                <h5 class="profile-username text-center">House number: {{$addresses->house_number}}</h5>
                 @endif
               </div>
               <!-- /.card-body -->

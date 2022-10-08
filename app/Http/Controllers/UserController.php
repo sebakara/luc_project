@@ -27,7 +27,9 @@ class UserController extends Controller
     }
 // show create account
     public function showCreateUser(Request $request){
-        return view('register');
+        $province = Province::get();
+            $data = ['provinces'=>$province];
+        return view('register',$data);
     }
 
     public function signOut() {
@@ -71,16 +73,20 @@ public function dashboard(){
     $province = Province::get();
     $users = UserDetail::where('user_id',auth()->user()->id)
     ->join('users','users.id','=','user_details.user_id')
-    ->join('villages','villages.id','=','user_details.location_of_birth')
-    ->join('cells','cells.id','=','villages.cell')
-    ->join('sectors','sectors.id','=','cells.sector')
-    ->join('districts','districts.id','=','sectors.district')
-    ->join('provinces','provinces.id','=','districts.province')
-    ->select('user_details.*','users.email','villages.name as village','villages.id as umudugudu','cells.name as cell','cells.id as akagali','sectors.name as sector','sectors.id as umurenge','districts.name as district','districts.id as akarere','provinces.name as province','provinces.id as intara')
+    // ->join('villages','villages.id','=','user_details.location_of_birth')
+    // ->join('cells','cells.id','=','villages.cell')
+    // ->join('sectors','sectors.id','=','cells.sector')
+    // ->join('districts','districts.id','=','sectors.district')
+    // ->join('provinces','provinces.id','=','districts.province')
+    ->select('user_details.*','users.email')
+    // ->select('user_details.*','users.email','villages.name as village','villages.id as umudugudu','cells.name as cell','cells.id as akagali','sectors.name as sector','sectors.id as umurenge','districts.name as district','districts.id as akarere','provinces.name as province','provinces.id as intara')
     ->first();
-$members = $user = UserDetail::where('referal',$users->referal)->get();
-    // var_dump($user);
+    // var_dump($users);
     // die();
+
+
+    $members = $user = UserDetail::where('referal',$users->referal)->get();
+
     $data = ['user'=>$users,
     'provinces'=>$province,
     'members' => $members
@@ -91,32 +97,44 @@ $members = $user = UserDetail::where('referal',$users->referal)->get();
         $request->validate([
             'names' => 'required|min:3|max:50',
             'email'=>'required|email|unique:users',
-            'password' => 'required|confirmed|min:6', // this will check password_confirmation 
+            'password' => 'required|confirmed|min:6',
+            'location'=>'required', // this will check password_confirmation 
                                                       //field in request
         ]);
         $referal = md5(microtime());
         $user = User::create([
-            'role_id'=>1,
+            'role_id'=>3,
             'email'=>$request->get('email'),
             'password'=>Hash::make($request->get('password')),
-            'varified'=>0,
+            'varified'=>1,
           ]);
           UserDetail::create([
             'names'=>$request->get('names'), 
             'user_id'=>$user->id,
             'referal'=>$referal
           ]);
-            $to_name = $request->get('names');
-            $to_email = $request->get('email');
-            $link = 'localhost/luc/public/activate_email/'.base64_encode($to_email);
-            $data = array('name'=>$to_name, 'actlink'=>$link, 'body' => 'Activation Email');
-            //   base64_encode()
-            Mail::send('emails.activate', $data, function($message) use ($to_name, $to_email) {
-            $message->to($to_email, $to_name)
-            ->subject('Activation Email');
-            $message->from('iribatech@gmail.com','Activation Email');
-            });
-            return redirect("get_create_account")->with('message','check your email and verify your account first!');
+
+        ReAllocation::create([
+        'user_id'=>$user->id, 
+        'new_village_id'=>$request->get('location'),
+        'street_address'=>$request->get('street_address'), 
+        'house_number'=>$request->get('house_number'),
+        'status'=>1
+        ]);
+
+
+return redirect("/")->with('message','Account was created successfully');
+            // $to_name = $request->get('names');
+            // $to_email = $request->get('email');
+            // $link = 'localhost/luc/public/activate_email/'.base64_encode($to_email);
+            // $data = array('name'=>$to_name, 'actlink'=>$link, 'body' => 'Activation Email');
+            // //   base64_encode()
+            // Mail::send('emails.activate', $data, function($message) use ($to_name, $to_email) {
+            // $message->to($to_email, $to_name)
+            // ->subject('Activation Email');
+            // $message->from('iribatech@gmail.com','Activation Email');
+            // });
+            // return redirect("get_create_account")->with('message','check your email and verify your account first!');
 
         //   var_dump($user->id);
     }
@@ -236,7 +254,7 @@ public function addNewMember(Request $request){
 // return re-allocate page
 public function reAllocate(){
     $location = ReAllocation::where('user_id',Auth::user()->id)
-    // ->where('status',1)
+    ->where('status',1)
     ->join('villages','villages.id','=','re_allocations.new_village_id')
     ->join('cells','cells.id','=','villages.cell')
     ->join('sectors','sectors.id','=','cells.sector')
@@ -269,11 +287,11 @@ public function postReAllocation(Request $request){
         'user_id'=>Auth::user()->id, 
         'new_village_id'=>$request->get('location'),
         'street_address'=>$request->get('street_address'), 
+        'house_number'=>$request->get('house_number'),
         'status'=>1
     ]);
     // get citizen infot
     $citizeninfo = UserDetail::where('user_id',Auth::user()->id)->first();
-    // get leadersinfo
     $leaderinfo = Leader::join('users','users.id','leaders.user_id')
     ->join('user_details','user_details.user_id','users.id')
     ->where('leaders.village_id',$request->get('location'))
@@ -281,16 +299,14 @@ public function postReAllocation(Request $request){
     // formulate the message
     $message = "Dear ".$leaderinfo->names.", "."The new citizen: ".$citizeninfo->names." moved in your village on the road ".$request->get('street_address');
 
-    $to_name = $leaderinfo->names;
-    $to_email = $leaderinfo->email;
-    $data = array('name'=>$to_name,'body' => $message);
-    //   base64_encode()
-    Mail::send('emails.notify', $data, function($message) use ($to_name, $to_email) {
-    $message->to($to_email, $to_name)
-    ->subject('Notification');
-    $message->from('iribatech@gmail.com','Notification');
-    });
-
+    // $to_name = $leaderinfo->names;
+    // $to_email = $leaderinfo->email;
+    // $data = array('name'=>$to_name,'body' => $message);
+    // Mail::send('emails.notify', $data, function($message) use ($to_name, $to_email) {
+    // $message->to($to_email, $to_name)
+    // ->subject('Notification');
+    // $message->from('iribatech@gmail.com','Notification');
+    // });
     return redirect("get_re_allocate")->with('msg','success');
 }
 

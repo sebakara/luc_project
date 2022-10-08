@@ -9,5 +9,5 @@ class ReAllocation extends Model
 {
     use HasFactory;
     protected $table = 're_allocations';
-    protected $fillable = ['user_id', 'new_village_id','street_address', 'status'];
+    protected $fillable = ['user_id', 'new_village_id','street_address','house_number', 'status'];
 }
