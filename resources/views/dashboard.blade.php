@@ -59,24 +59,43 @@
                         <div class="col-sm-10">
                           <input type="text" name="names" value="{{$user->names}}" class="form-control" id="inputName" placeholder="Name">
                         </div>
+                        @if($errors->has('names'))
+                          <div class="alert alert-danger">
+                            {{ $errors->first('names') }}
+                          </div>
+                        @endif
                       </div>
                       <div class="form-group row">
                         <label for="inputName" class="col-sm-2 col-form-label">National ID</label>
                         <div class="col-sm-10">
                           <input type="text" name="national_id" class="form-control" value="{{$user->national_id}}" placeholder="National Id">
                         </div>
+                        @if($errors->has('national_id'))
+                          <div class="alert alert-danger">{{ $errors->first('national_id') }}</div>
+                        @endif
+
                       </div>
                       <div class="form-group row">
                         <label for="inputName" class="col-sm-2 col-form-label">Phone Number</label>
                         <div class="col-sm-10">
                           <input type="text" class="form-control" value="{{$user->phone_number}}" name="phone_number" placeholder="phone number">
                         </div>
+                        @if($errors->has('phone_number'))
+                          <div class="alert alert-danger">
+                            {{ $errors->first('phone_number') }}
+                          </div>
+                        @endif
                       </div>
                       <div class="form-group row">
                         <label for="inputEmail" class="col-sm-2 col-form-label">Date Of Birth</label>
                         <div class="col-sm-10">
                           <input type="date" class="form-control" name="date_of_birth" value="{{$user->date_of_birth}}" placeholder="">
                         </div>
+                        @if($errors->has('date_of_birth'))
+                          <div class="alert alert-danger">
+                            {{ $errors->first('date_of_birth') }}
+                          </div>
+                        @endif
                       </div>
 
                       <div class="form-group row">
@@ -124,9 +143,9 @@
                       </div>
 
                       <div class="form-group row">
-                        <label for="inputExperience" class="col-sm-2 col-form-label">Profile Image</label>
+                        <!-- <label for="inputExperience" class="col-sm-2 col-form-label">Profile Image</label> -->
                         <div class="col-sm-10">
-                        <input type="file" name="profile" class="form-control" id="file">
+                        <input type="hidden" name="profile" class="form-control" id="file">
                         </div>
                       </div>
                       <div class="form-group row">

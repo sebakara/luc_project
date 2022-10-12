@@ -19,6 +19,7 @@
             @if(session('message'))
             <div class="alert alert-success">
                 {{ session('message') }}
+                {{$errors}}
             </div>
             @endif
               <div class="card-header p-2">
@@ -52,9 +53,6 @@
                         <div class="col-sm-10">
                           <input type="number" name="phone_number" class="form-control" id="inputName" placeholder="07.........">
                         </div>
-                        @if($errors->has('phone_number'))
-                          <div class="alert alert-danger">{{ $errors->first('phone_number') }}</div>
-                        @endif
                       </div>
                       <div class="form-group row">
                         <label for="exampleSelectRounded0" class="col-sm-2 col-form-label">Gender</label>
@@ -119,9 +117,6 @@
                         <div class="col-sm-10">
                         <input type="file" name="profile" class="form-control" id="file">
                         </div>
-                        @if($errors->has('profile'))
-                          <div class="alert alert-danger">{{ $errors->first('profile') }}</div>
-                        @endif
                       </div>
                       <div class="form-group row">
                         <div class="offset-sm-2 col-sm-10">

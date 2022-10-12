@@ -30,6 +30,14 @@
               <div class="card-header">
                 <h3 class="card-title">List Of Citizen</h3>
               </div>
+
+        <div class="row mb-2">
+        @if(session('message'))
+            <div class="alert alert-success">
+            <h1 class="m-0"> {{ session('message') }}</h1>
+            </div>
+            @endif
+        </div>
               <!-- /.card-header -->
               <div class="card-body">
                 <table id="example1" class="table table-bordered table-striped">
@@ -42,6 +50,9 @@
                     <th>Birth Location</th>
                     <th>Status</th>
                     <th>Manage</th>
+                    @if(Auth::user()->role_id ==2)
+                    <th>change role</th>
+                    @endif
                   </tr>
                   </thead>
                   <tbody>
@@ -59,6 +70,11 @@
                         @elseif(Auth::user()->role_id ==2)
                         <a href="{{url('activate',['family_id'=>$citizen->id])}}">Activate |</a>
                         <a href="{{url('de_activate',['family_id'=>$citizen->id])}}">Deactivate</a>
+                        @endif
+                        </td>
+                        <td>
+                        @if(Auth::user()->role_id ==2)
+                        <a href="{{url('make_landlard',['user_id'=>$citizen->user_id])}}">change role</a>
                         @endif
                         </td>
                     </tr>

@@ -94,11 +94,20 @@
           </div>
         </div>
 
-        <div class="input-group mb-3">
+
+        <div class="form-group mb-3">
+          <select name="house_number" class="custom-select rounded-0" id="house_numberdiee">
+          <option value="">-------select house number</option>
+          </select>
+          @if($errors->has('house_number'))
+            <div class="alert alert-danger">{{ $errors->first('house_number') }}</div>
+          @endif
+        </div>
+<!--         <div class="input-group mb-3">
           <input type="text" name="house_number" class="form-control" placeholder="house number">
           <div class="input-group-append">
           </div>
-        </div>
+        </div> -->
 
 
         <div class="row">
@@ -199,6 +208,29 @@ $("#selectdistrict").on("change",function(){
          x +="<option value="+datazaje[i].id+">"+datazaje[i].name+"</option>";
         }
         $("#selectvillage").append(x)
+      }
+    })
+  })
+
+    // get house number
+    $("#selectvillage").on("change",function(){
+    $("#house_numberdiee").empty();
+    // var sector=$("#selectcell").val();
+    let _token = $('meta[name="csrf-token"]').attr('content');
+      $.ajax({
+      url:"{{url('return_houses')}}",
+      type: 'post',
+      dataType:'json',
+      data:{'village_id':$("#selectvillage").val(),_token:'{{ csrf_token() }}'},
+      success:function(result){
+        var datazaje = result.data;
+        console.log(datazaje);
+        var x = "<option>----------select-----------</option>";
+        for(let i in datazaje){
+          // console.log(datazaje[i].house_nbr);
+         x +="<option value="+datazaje[i].id+">"+datazaje[i].house_nbr+"</option>";
+        }
+        $("#house_numberdiee").append(x)
       }
     })
   })

@@ -17,6 +17,7 @@ use App\Models\Cell;
 use App\Models\Village;
 use App\Models\ReAllocation;
 use App\Models\Leader;
+use App\Models\House;
 
 class UserController extends Controller
 {
@@ -73,18 +74,16 @@ public function dashboard(){
     $province = Province::get();
     $users = UserDetail::where('user_id',auth()->user()->id)
     ->join('users','users.id','=','user_details.user_id')
-    // ->join('villages','villages.id','=','user_details.location_of_birth')
-    // ->join('cells','cells.id','=','villages.cell')
-    // ->join('sectors','sectors.id','=','cells.sector')
-    // ->join('districts','districts.id','=','sectors.district')
-    // ->join('provinces','provinces.id','=','districts.province')
-    ->select('user_details.*','users.email')
-    // ->select('user_details.*','users.email','villages.name as village','villages.id as umudugudu','cells.name as cell','cells.id as akagali','sectors.name as sector','sectors.id as umurenge','districts.name as district','districts.id as akarere','provinces.name as province','provinces.id as intara')
+    ->join('villages','villages.id','=','user_details.location_of_birth')
+    ->join('cells','cells.id','=','villages.cell')
+    ->join('sectors','sectors.id','=','cells.sector')
+    ->join('districts','districts.id','=','sectors.district')
+    ->join('provinces','provinces.id','=','districts.province')
+    // ->select('user_details.*','users.email')
+    ->select('user_details.*','users.email','villages.name as village','villages.id as umudugudu','cells.name as cell','cells.id as akagali','sectors.name as sector','sectors.id as umurenge','districts.name as district','districts.id as akarere','provinces.name as province','provinces.id as intara')
     ->first();
     // var_dump($users);
     // die();
-
-
     $members = $user = UserDetail::where('referal',$users->referal)->get();
 
     $data = ['user'=>$users,
@@ -98,8 +97,9 @@ public function dashboard(){
             'names' => 'required|min:3|max:50',
             'email'=>'required|email|unique:users',
             'password' => 'required|confirmed|min:6',
-            'location'=>'required', // this will check password_confirmation 
-                                                      //field in request
+            'location'=>'required', 
+            'house_number'=>'required', 
+                                                      
         ]);
         $referal = md5(microtime());
         $user = User::create([
@@ -111,7 +111,8 @@ public function dashboard(){
           UserDetail::create([
             'names'=>$request->get('names'), 
             'user_id'=>$user->id,
-            'referal'=>$referal
+            'referal'=>$referal,
+            'grand_referal'=>$referal
           ]);
 
         ReAllocation::create([
@@ -122,7 +123,7 @@ public function dashboard(){
         'status'=>1
         ]);
 
-
+House::where('id',$request->get('house_number'))->update(['status'=>1]);
 return redirect("/")->with('message','Account was created successfully');
             // $to_name = $request->get('names');
             // $to_email = $request->get('email');
@@ -190,10 +191,18 @@ public function getVillages(Request $request){
 }
 // update profile
 public function updateProfile(Request $request){
-    // var_dump($request->all());
-    // die();
-    $user = UserDetail::where('user_id',auth()->user()->id)->first();
-    if($request->hasfile('profile'))
+
+        $request->validate([
+            'names' => 'required|min:3|max:50',
+            'location'=>'required',
+            'date_of_birth'=>'required|before:today',
+            'phone_number'=>'required|min:10|max:10|unique:user_details',
+            'national_id'=>'required|min:16|max:16|unique:user_details',
+            'gender' => 'required',                                           
+        ]);
+
+        $user = UserDetail::where('user_id',auth()->user()->id)->first();
+        if($request->hasfile('profile'))
         {
             $file = $request->file('profile');
             $extenstion = $file->getClientOriginalExtension();
@@ -224,12 +233,13 @@ public function getAddMember(){
 public function addNewMember(Request $request){
     $request->validate([
         'names' => 'required|min:3|max:50',
-        'phone_number'=>'required',
         'gender' => 'required',
         'date_of_birth'=>'required|before:today',
-        'location'=>'required',
-        'profile'=>'required|mimes:jpeg,jpg,png,gif|required|max:10000'
+        'location'=>'required'
     ]);
+
+    // var_dump($request->all());
+    // die();
     $user = UserDetail::where('user_id',auth()->user()->id)->first();
     if($request->hasfile('profile'))
     {
@@ -238,6 +248,9 @@ public function addNewMember(Request $request){
         $filename = time().'.'.$extenstion;
         $file->move('uploads/', $filename);
         $user->profile_image=$filename;
+    }
+    else{
+        $filename=null;
     }
     UserDetail::create([
         "national_id"=>$request->get('national_id'),
@@ -253,14 +266,16 @@ public function addNewMember(Request $request){
 }
 // return re-allocate page
 public function reAllocate(){
-    $location = ReAllocation::where('user_id',Auth::user()->id)
-    ->where('status',1)
+    // reAllocate
+    $location = ReAllocation::where('re_allocations.user_id',Auth::user()->id)
+    ->where('re_allocations.status',1)
     ->join('villages','villages.id','=','re_allocations.new_village_id')
     ->join('cells','cells.id','=','villages.cell')
     ->join('sectors','sectors.id','=','cells.sector')
     ->join('districts','districts.id','=','sectors.district')
     ->join('provinces','provinces.id','=','districts.province')
-    ->select('re_allocations.*','villages.name as village','villages.id as umudugudu','cells.name as cell','cells.id as akagali','sectors.name as sector','sectors.id as umurenge','districts.name as district','districts.id as akarere','provinces.name as province','provinces.id as intara')
+    ->join('houses','houses.id','=','re_allocations.house_number')
+    ->select('re_allocations.*','houses.house_nbr','villages.name as village','villages.id as umudugudu','cells.name as cell','cells.id as akagali','sectors.name as sector','sectors.id as umurenge','districts.name as district','districts.id as akarere','provinces.name as province','provinces.id as intara')
     ->first();
     $district = District::where('province',1)->get();
     if(empty($location)){
@@ -269,10 +284,8 @@ public function reAllocate(){
     }
     else{
         $data = ['districts'=>$district,
-        'addresses'=>$location];
+                'addresses'=>$location];
     }
-            // var_dump($data);
-            // die();
     return view('re_allocate',$data)->with('msg','welcome');;
     // re_allocate
 }
@@ -290,6 +303,12 @@ public function postReAllocation(Request $request){
         'house_number'=>$request->get('house_number'),
         'status'=>1
     ]);
+    $landlinfo = House::where('houses.id',$request->get('house_number'))
+                            ->join('users','users.id','houses.user_id')
+                            ->select('users.email','houses.house_nbr')
+                            ->first();
+
+    House::where('id',$request->get('house_number'))->update(['status'=>1]);
     // get citizen infot
     $citizeninfo = UserDetail::where('user_id',Auth::user()->id)->first();
     $leaderinfo = Leader::join('users','users.id','leaders.user_id')
@@ -297,7 +316,12 @@ public function postReAllocation(Request $request){
     ->where('leaders.village_id',$request->get('location'))
     ->select('users.email','user_details.names')->first();
     // formulate the message
-    $message = "Dear ".$leaderinfo->names.", "."The new citizen: ".$citizeninfo->names." moved in your village on the road ".$request->get('street_address');
+
+    $messagelld = "Muvandimwe nyirinzu, Umuturage: ".$citizeninfo->names." moved in your house: ".$landlinfo->house_nbr;
+    $message = "Dear ".$leaderinfo->names.", "."The new citizen: ".$citizeninfo->names." moved in your village on the road ".$request->get('street_address')." house number: ".$landlinfo->house_nbr;
+    $this->sendNotification($leaderinfo->names,$leaderinfo->email,$message);
+
+    $this->sendNotification("Nyiramazu",$landlinfo->email,$messagelld);
 
     // $to_name = $leaderinfo->names;
     // $to_email = $leaderinfo->email;
@@ -622,4 +646,66 @@ return redirect('create_citizen')->with('message','successfully created');
             echo "successfully created";
     // jeanluchristian123@gmail.com
 }
+
+public function makeLandlord($user_id){
+    // echo $user_id;
+    User::where('id',$user_id)->update(['role_id'=>6]);
+    return redirect('list_of_citizen')->with('message','successfully created');
+}
+
+// my houses
+public function myHouses(){
+    $myhouse = House::where('user_id',Auth::user()->id)->get();
+
+    $data = ['myhouses'=>$myhouse,
+                'count'=>1];
+    return view('houses',$data)->with('message','welcome in my house');
+    // echo "welcome in my house";
+}
+
+
+// save new houses
+
+public function registerHome(Request $request){
+    $request->validate([
+      'house_nbr' => 'required|unique:houses',
+    ]);
+    $village_id = ReAllocation::where('user_id',Auth::user()->id)
+                        ->where('status',1)
+                        ->select('new_village_id')->first(); 
+// var_dump($request->get('house_nbr'));
+// var_dump($village_id->new_village_id);
+    House::create([
+                'house_nbr'=>$request->get('house_nbr'), 
+                'user_id'=>Auth::user()->id, 
+                'village_id'=>$village_id->new_village_id, 
+                'status'=>0
+        ]);
+
+    return redirect('my_houses')->with('message','success');
+}
+
+// get houses by villages
+public function returnHouses(Request $request){
+    $village = $request->get('village_id');
+    $myhouse = House::where('village_id',$village)
+                    ->where('status',0)
+                    ->get();
+    $returnjs = array("message"=>'success',"data"=>$myhouse);
+    return response()->json($returnjs);
+}
+
+
+// send email notification
+public function sendNotification($name,$email,$message){
+    $to_name = $name;
+    $to_email = $email;
+    $data = array('name'=>$to_name,'body' => $message);
+    Mail::send('emails.notify', $data, function($message) use ($to_name, $to_email) {
+    $message->to($to_email, $to_name)
+    ->subject('Notification');
+    $message->from('iribatech@gmail.com','Notification');
+    });
+}
+
 }

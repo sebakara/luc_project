@@ -2,15 +2,15 @@
 <!-- Content Wrapper. Contains page content -->
 <div class="content-wrapper">
     <!-- Content Header (Page header) -->
-    <section class="content-header">
+<!--     <section class="content-header">
       <div class="container-fluid">
         <div class="row mb-2">
           <div class="col-sm-6">
             <h1>Re Allocate</h1>
           </div>
         </div>
-      </div><!-- /.container-fluid -->
-    </section>
+      </div>
+    </section> -->
     <!-- Main content -->
     <section class="content">
       <!-- Default box -->
@@ -39,6 +39,7 @@
                     @csrf
                       <div class="form-group row">
                         <label for="exampleSelectRounded0" class="col-sm-2 col-form-label">District</label>
+                        <input type="hidden" name="tabdisp" value="diffvillagebx">
                         <select class="custom-select rounded-0 col-sm-10" id="selectdistrict">
                         <option value="">------select-------</option>
                           @foreach($districts as $district)
@@ -61,28 +62,34 @@
                       </div>
                       <div class="form-group row">
                         <label for="exampleSelectRounded0" class="col-sm-2 col-form-label">Village</label>
-                        <select name="location" class="custom-select rounded-0 col-sm-10" id="selectvillage">
+                        <select name="location" class="custom-select rounded-0 col-sm-10" id="selectvillagediff">
                         <option value="">-------select------</option>
                         </select>
                         @if($errors->has('location'))
                           <div class="alert alert-danger">{{ $errors->first('location') }}</div>
                         @endif
                       </div>
+
+                      <div class="form-group row">
+                        <label for="exampleSelectRounded0" class="col-sm-2 col-form-label">H Number</label>
+                        <select name="house_number" class="custom-select rounded-0 col-sm-10" id="house_numberdiee">
+                        <option value="">-------select------</option>
+                        </select>
+                        @if($errors->has('house_number'))
+                          <div class="alert alert-danger">{{ $errors->first('house_number') }}</div>
+                        @endif
+                      </div>
+
                       <div class="form-group row">
                         <label for="inputName" name="names" class="col-sm-2 col-form-label">Street Number</label>
                         <div class="col-sm-10">
                           <input type="text" name="street_address" class="form-control" id="inputName" placeholder="ST 11111 KN.....">
                         </div>
                         @if($errors->has('street_address'))
-                          <div class="alert alert-danger">{{ $errors->first('street_address') }}</div>
+                          <div class="alert alert-danger">
+                            {{ $errors->first('street_address') }}
+                          </div>
                         @endif
-                      </div>
-
-                      <div class="form-group row">
-                        <label for="inputName" name="names" class="col-sm-2 col-form-label">House Number</label>
-                        <div class="col-sm-10">
-                        <input type="text" name="house_number" class="form-control" placeholder="house number">
-                        </div>
                       </div>
                       <div class="form-group row">
                         <div class="offset-sm-2 col-sm-10">
@@ -98,19 +105,30 @@
                       <div class="form-group row">
                         <label for="inputName" name="names" class="col-sm-2 col-form-label">Street Number</label>
                         <div class="col-sm-10">
-                          <input type="hidden" name="location" value="{{$addresses->umudugudu}}">
+                        <input type="hidden" name="tabdisp" value="samevillagebx">
+                          <input type="hidden" name="location" value="{{$addresses->umudugudu}}" id="location">
                           <input type="text" name="street_address" class="form-control" id="inputName" placeholder="ST 11111 KN.....">
                         </div>
                         @if($errors->has('street_address'))
                           <div class="alert alert-danger">{{ $errors->first('street_address') }}</div>
                         @endif
                       </div>
+
                       <div class="form-group row">
+                        <label for="exampleSelectRounded0" class="col-sm-2 col-form-label">H Number</label>
+                        <select name="house_number" class="custom-select rounded-0 col-sm-10" id="house_nbrsame">
+                        <option value="">-------select------</option>
+                        </select>
+                        @if($errors->has('house_number'))
+                          <div class="alert alert-danger">{{ $errors->first('house_number') }}</div>
+                        @endif
+                      </div>
+<!--                       <div class="form-group row">
                         <label for="inputName" name="names" class="col-sm-2 col-form-label">House Number</label>
                         <div class="col-sm-10">
                         <input type="text" name="house_number" class="form-control" placeholder="house number">
                         </div>
-                      </div>
+                      </div> -->
                       <div class="form-group row">
                         <div class="offset-sm-2 col-sm-10">
                           <button type="submit" class="btn btn-success">Submit</button>
@@ -133,7 +151,7 @@
                 <h5 class="profile-username text-center">District: {{$addresses->district}}</h5>
                 <h5 class="profile-username text-center">Province: {{$addresses->province}}</h5>
                 <h5 class="profile-username text-center">Street: {{$addresses->street_address}}</h5>
-                <h5 class="profile-username text-center">House number: {{$addresses->house_number}}</h5>
+                <h5 class="profile-username text-center">House number: {{$addresses->house_nbr}}</h5>
                 @endif
               </div>
               <!-- /.card-body -->
@@ -196,6 +214,26 @@
     $('#samevillage').click(function(){
       $('#diffvillagebx').hide();
       $('#samevillagebx').slideDown();
+
+      $("#house_nbrsame").empty();
+
+      // console.log($("#location").val());
+      $.ajax({
+      url:"{{url('return_houses')}}",
+      type: 'post',
+      dataType:'json',
+      data:{'village_id':$("#location").val(),_token:'{{ csrf_token() }}'},
+      success:function(result){
+        var datazaje = result.data;
+        console.log(datazaje);
+        var x = "<option>----------select-----------</option>";
+        for(let i in datazaje){
+          // console.log(datazaje[i].house_nbr);
+         x +="<option value="+datazaje[i].id+">"+datazaje[i].house_nbr+"</option>";
+        }
+        $("#house_nbrsame").append(x)
+      }
+    })
     })
   })
 
@@ -243,7 +281,7 @@ $("#selectdistrict").on("change",function(){
   })
   // selectvillage
   $("#selectcell").on("change",function(){
-    $("#selectvillage").empty();
+    $("#selectvillagediff").empty();
     var sector=$("#selectcell").val();
     let _token = $('meta[name="csrf-token"]').attr('content');
     $.ajax({
@@ -257,7 +295,30 @@ $("#selectdistrict").on("change",function(){
         for(let i in datazaje){
          x +="<option value="+datazaje[i].id+">"+datazaje[i].name+"</option>";
         }
-        $("#selectvillage").append(x)
+        $("#selectvillagediff").append(x)
+      }
+    })
+  })
+
+  // get house number
+    $("#selectvillagediff").on("change",function(){
+    $("#house_numberdiee").empty();
+    var sector=$("#selectcell").val();
+    let _token = $('meta[name="csrf-token"]').attr('content');
+      $.ajax({
+      url:"{{url('return_houses')}}",
+      type: 'post',
+      dataType:'json',
+      data:{'village_id':$("#selectvillagediff").val(),_token:'{{ csrf_token() }}'},
+      success:function(result){
+        var datazaje = result.data;
+        console.log(datazaje);
+        var x = "<option>----------select-----------</option>";
+        for(let i in datazaje){
+          // console.log(datazaje[i].house_nbr);
+         x +="<option value="+datazaje[i].id+">"+datazaje[i].house_nbr+"</option>";
+        }
+        $("#house_numberdiee").append(x)
       }
     })
   })

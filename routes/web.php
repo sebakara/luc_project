@@ -45,8 +45,14 @@ Route::middleware(['checklogin'])->group(function(){
     Route::post('post_change_status',[App\Http\Controllers\UserController::class,'postChangeStatus'])->name('post_change_status');
     Route::get('create_citizen',[App\Http\Controllers\Usercontroller::class,'createCitizen'])->name('create_citizen');
     Route::post('post_create_citizen',[App\Http\Controllers\Usercontroller::class, 'postCreateCitizen'])->name('post_create_citizen');
+    Route::get('make_landlard/{user_id}',[App\Http\Controllers\Usercontroller::class,'makeLandlord'])->name('make_landlard');
+    Route::get('my_houses',[App\Http\Controllers\Usercontroller::class,'myHouses'])->name('my_houses');
+    Route::post('register_home',[App\Http\Controllers\Usercontroller::class,'registerHome'])->name('register_home');
+
+
 });
 
+Route::post('return_houses',[App\Http\Controllers\Usercontroller::class,'returnHouses'])->name('return_houses');
 Route::post('get_district_prov',[App\Http\Controllers\UserController::class,'getDistricts'])->name('get_district_prov');
 Route::post('get_sector_dist',[App\Http\Controllers\UserController::class,'getSectors'])->name('get_sector_dist');
 Route::post('get_cell_sector',[App\Http\Controllers\UserController::class,'getCells'])->name('get_cell_sector');
