@@ -68,6 +68,7 @@
                       <th>Number</th>
                       <th>House number</th>
                       <th>Status</th>
+                      <th>Notify</th>
                     </tr>
                   </thead>
                   <tbody>
@@ -81,6 +82,9 @@
                         @else
                         Taken
                         @endif
+                      </td>
+                      <td>
+                        <a href="{{url('notify',['house_id'=>$myhouse->id])}}">Notify</a>
                       </td>
                     </tr>
                     @endforeach

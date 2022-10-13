@@ -40,7 +40,7 @@ Route::middleware(['checklogin'])->group(function(){
     Route::get('change_status/{family_id}',[App\Http\Controllers\UserController::class, 'changeStatus'])->name('change_status');
     Route::get('activate/{family_id}',[App\Http\Controllers\UserController::class, 'activateCitizen'])->name('activate');
     Route::get('de_activate/{family_id}',[App\Http\Controllers\UserController::class, 'deActivateCitizen'])->name('de_activate');
-
+    Route::get('notify/{house_id}',[App\Http\Controllers\UserController::class,'notifyLeader'])->name('notify');
 
     Route::post('post_change_status',[App\Http\Controllers\UserController::class,'postChangeStatus'])->name('post_change_status');
     Route::get('create_citizen',[App\Http\Controllers\Usercontroller::class,'createCitizen'])->name('create_citizen');

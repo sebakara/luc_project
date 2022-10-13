@@ -708,4 +708,25 @@ public function sendNotification($name,$email,$message){
     });
 }
 
+// notify the mudugudu
+public function notifyLeader($house_id){
+
+$houseinfo = House::where('id',$house_id)->first();
+$newcitizen = ReAllocation::where('house_number',$house_id)->where('status',1)
+                            ->join('user_details','user_details.user_id','=','re_allocations.user_id')
+                            ->first();
+
+$leadersinfo = Leader::where('village_id',$newcitizen->new_village_id)
+                        ->join('users','users.id','=','leaders.user_id')
+                        ->select('users.email')->first();
+
+$message = "Muvandimwe Muyobozi w'umudugudu, Umuturage: ".$newcitizen->names." ufite indangamuntu: ".$newcitizen->national_id." yimukiye munzu ifite: ".$houseinfo->house_nbr;
+$this->sendNotification("Muyobozi",$leadersinfo->email,$message); 
+
+return redirect('my_houses')->with('message','notification sent successfully');        
+
+                            // var_dump($newcitizen->names);
+                            // var_dump($newcitizen->new_village_id);
+                            // var_dump($leadersinfo->email);
+}
 }
