@@ -97,7 +97,7 @@
                     <th>Email</th>
                     <th>Role</th>
                     <th>Sector</th>
-                    <th>Action</th>
+                    <!-- <th>Action</th> -->
                   </tr>
                 </thead>
                 <tbody>
@@ -107,7 +107,7 @@
                     <td>{{$leader->email}}</td>
                     <td>{{$leader->role_name}}</td>
                     <td>{{$leader->sector}}</td>
-                    <td>action</td>
+                    <!-- <td>action</td> -->
                   </tr>
                   @endforeach
                 </tbody>
