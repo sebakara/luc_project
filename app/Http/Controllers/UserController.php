@@ -84,7 +84,13 @@ public function dashboard(){
     ->first();
     // var_dump($users);
     // die();
-    $members = $user = UserDetail::where('referal',$users->referal)->get();
+    if(!empty($users)){
+        $members = $user = UserDetail::where('referal',$users->referal)->get();
+    }
+    else{
+        $members = null;
+    }
+    
 
     $data = ['user'=>$users,
     'provinces'=>$province,
