@@ -135,9 +135,8 @@
 <script>
   $(function () {
     $("#example1").DataTable({
-      "responsive": true, "lengthChange": false, "autoWidth": false,
-      "buttons": ["copy", "csv", "excel", "pdf", "print", "colvis"],
-      // "sDom": 'T<"clear">lfrtip',
+      // "responsive": true, "lengthChange": false, "autoWidth": false,
+      // "buttons": ["copy", "csv", "excel", "pdf", "print", "colvis"],
       "oTableTools": {
             "aButtons": [
                 {
