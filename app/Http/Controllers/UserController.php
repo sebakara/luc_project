@@ -308,7 +308,7 @@ public function postReAllocation(Request $request){
                             ->select('users.email','houses.house_nbr')
                             ->first();
 
-    House::where('id',$request->get('house_number'))->update(['status'=>1]);
+    // House::where('id',$request->get('house_number'))->update(['status'=>1]);
     // get citizen infot
     $citizeninfo = UserDetail::where('user_id',Auth::user()->id)->first();
     $leaderinfo = Leader::join('users','users.id','leaders.user_id')
@@ -719,6 +719,9 @@ $newcitizen = ReAllocation::where('house_number',$house_id)->where('status',1)
 $leadersinfo = Leader::where('village_id',$newcitizen->new_village_id)
                         ->join('users','users.id','=','leaders.user_id')
                         ->select('users.email')->first();
+
+
+House::where('id',$house_id)->update(['status'=>1]);
 
 $message = "Muvandimwe Muyobozi w'umudugudu, Umuturage: ".$newcitizen->names." ufite indangamuntu: ".$newcitizen->national_id." yimukiye munzu ifite: ".$houseinfo->house_nbr;
 $this->sendNotification("Muyobozi",$leadersinfo->email,$message); 
